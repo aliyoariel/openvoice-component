@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SAMP-VOICE SDK Documentation</title>
+    
+    <link rel="icon" type="image/x-icon" href="https://raw.githubusercontent.com/aliyoariel/openvoice-component/master/setup/icon.ico">
+    
+    <style>
+        :root {
+            --bg-color: #1e1e2e;
+            --sidebar-bg: #252538;
+            --text-color: #cdd6f4;
+            --text-muted: #a6adc8;
+            --accent-color: #89b4fa;
+            --border-color: #45475a;
+            --code-bg: #11111b;
+            --table-header: #313244;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Segoe UI', sans-serif; background-color: var(--bg-color); color: var(--text-color); display: flex; line-height: 1.6; }
+        nav { width: 280px; background-color: var(--sidebar-bg); height: 100vh; position: fixed; overflow-y: auto; border-right: 1px solid var(--border-color); padding: 20px 10px; }
+        nav h2 { font-size: 1.2rem; margin-bottom: 20px; padding-left: 10px; color: var(--accent-color); }
+        nav ul { list-style: none; }
+        nav ul li a { display: block; padding: 10px; color: var(--text-muted); text-decoration: none; border-radius: 5px; font-size: 0.95rem; transition: all 0.2s ease; }
+        nav ul li a:hover { background-color: var(--border-color); color: var(--text-color); }
+        main { margin-left: 280px; padding: 40px; max-width: 1000px; width: 100%; }
+        .top-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--border-color); padding-bottom: 20px; margin-bottom: 30px; }
+        
+        /* Gaya Dropdown Bahasa */
+        .lang-switcher select { 
+            background-color: var(--sidebar-bg); 
+            border: 1px solid var(--border-color); 
+            color: var(--text-color); 
+            padding: 8px 12px; 
+            cursor: pointer; 
+            border-radius: 5px; 
+            font-weight: bold; 
+            outline: none;
+        }
+
+        /* Gaya Tampilan Logo */
+        .brand-logo-container {
+            display: flex;
+            align-items: center;
+            margin-bottom: 30px;
+            padding: 15px;
+            background-color: var(--sidebar-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+        }
+        .brand-logo { width: 64px; height: 64px; margin-right: 20px; object-fit: contain; }
+        .brand-text h2 { margin-bottom: 0; font-size: 1.5rem; }
+        .brand-text p { margin-bottom: 0; color: var(--text-muted); font-size: 0.9rem; }
+
+        section { margin-bottom: 50px; scroll-margin-top: 40px; }
+        h1, h2, h3 { color: var(--accent-color); margin-bottom: 15px; }
+        h1 { font-size: 2.2rem; }
+        h2 { font-size: 1.6rem; border-bottom: 1px solid var(--border-color); padding-bottom: 5px; margin-top: 30px; }
+        h3 { font-size: 1.2rem; }
+        p, ul { margin-bottom: 15px; }
+        ul { padding-left: 20px; }
+        li { margin-bottom: 5px; }
+        pre { background-color: var(--code-bg); padding: 15px; border-radius: 8px; overflow-x: auto; border: 1px solid var(--border-color); font-family: monospace; margin-bottom: 20px; }
+        code { font-family: monospace; background-color: var(--code-bg); padding: 2px 6px; border-radius: 4px; color: #f38ba8; }
+        pre code { padding: 0; background-color: transparent; color: #a6e3a1; }
+        table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+        th, td { border: 1px solid var(--border-color); padding: 12px; text-align: left; }
+        th { background-color: var(--table-header); color: var(--accent-color); }
+        
+        /* GAYA TAMPILAN ERROR NO INTERNET (OVERLAY) */
+        .error-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-color: rgba(17, 17, 27, 0.95);
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            padding: 20px;
+            text-align: center;
+        }
+        .error-box {
+            background-color: #252538;
+            border: 2px solid #f38ba8;
+            padding: 30px;
+            border-radius: 10px;
+            max-width: 450px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+        }
+        .error-box h2 { color: #f38ba8; margin-bottom: 15px; border: none; padding: 0; margin-top: 0; }
+        .error-box p { color: #cdd6f4; margin-bottom: 20px; }
+        .btn-retry {
+            background-color: #f38ba8; color: #11111b;
+            border: none; padding: 10px 20px; font-weight: bold;
+            border-radius: 5px; cursor: pointer; transition: opacity 0.2s;
+        }
+        .btn-retry:hover { opacity: 0.9; }
+
+        @media (max-width: 768px) { body { flex-direction: column; } nav { width: 100%; height: auto; position: relative; } main { margin-left: 0; padding: 20px; } }
+    </style>
+</head>
+<body>
+
+    <div id="errorOverlay" class="error-overlay">
+        <div class="error-box">
+            <h2>Koneksi Gagal / Offline</h2>
+            <p>Dokumentasi tidak dapat memuat daftar bahasa. Pastikan perangkat Anda terhubung ke internet untuk mengambil data dari GitHub Gist.</p>
+            <button class="btn-retry" onclick="location.reload()">Coba Lagi</button>
+        </div>
+    </div>
+
+    <nav>
+        <h2>SAMP-VOICE Docs</h2>
+        <ul>
+            <li><a href="#about" id="nav_about">...</a></li>
+            <li><a href="#architecture" id="nav_architecture">...</a></li>
+            <li><a href="#config" id="nav_config">...</a></li>
+            <li><a href="#getting-started" id="nav_getting_started">...</a></li>
+            <li><a href="#concepts" id="nav_concepts">...</a></li>
+            <li><a href="#effects" id="nav_effects">...</a></li>
+            <li><a href="#types" id="nav_types">...</a></li>
+            <li><a href="#functions" id="nav_functions">...</a></li>
+        </ul>
+    </nav>
+
+    <main>
+        <div class="top-header">
+            <div>
+                <h1>SAMP-VOICE SDK</h1>
+                <p id="title_sub" style="color: var(--text-muted);">...</p>
+            </div>
+            
+            <div class="lang-switcher">
+                <select id="langSelect" onchange="window.changeLang(this.value)">
+                </select>
+            </div>
+        </div>
+
+        <div class="brand-logo-container">
+            <img src="https://raw.githubusercontent.com/aliyoariel/openvoice-component/master/setup/icon.ico" alt="SAMP-VOICE Logo" class="brand-logo">
+            <div class="brand-text">
+                <h2>SAMP-VOICE Official Developer SDK</h2>
+                <p>Voice Communication Systems Framework for SA-MP/CR-MP</p>
+            </div>
+        </div>
+
+        <section id="about">
+            <h2 id="about_title">...</h2>
+            <p id="about_desc">...</p>
+            <h3 id="features_title">...</h3>
+            <ul>
+                <li id="feat_1">...</li>
+                <li id="feat_2">...</li>
+                <li id="feat_3">...</li>
+                <li id="feat_4">...</li>
+                <li id="feat_5">...</li>
+                <li id="feat_6">...</li>
+            </ul>
+        </section>
+
+        <section id="architecture">
+            <h2 id="arch_title">...</h2>
+            <p id="arch_desc">...</p>
+            <ul>
+                <li id="mod_client">...</li>
+                <li id="mod_ctrl">...</li>
+                <li id="mod_voice">...</li>
+            </ul>
+        </section>
+
+        <section id="config">
+            <h2 id="cfg_title">...</h2>
+            <p id="cfg_desc">...</p>
+            <h3 id="cfg_example">...</h3>
+            <p id="cfg_machine_a">...</p>
+            
+            <h4 id="cfg_ctrl_title" style="margin: 15px 0 5px 0; color: var(--accent-color);">...</h4>
+            <pre><code>control_host = 0.0.0.0
+control_port = 2020
+command_host = 234.13.24.2
+command_port = 2020
+voice_host = 234.13.24.2
+voice_port = 2020</code></pre>
+            
+            <h4 id="cfg_voice_title" style="margin: 15px 0 5px 0; color: var(--accent-color);">...</h4>
+            <pre><code>control_host = 234.13.24.1
+control_port = 2020
+command_host = 0.0.0.0
+command_port = 2020
+voice_host = 0.0.0.0
+voice_port = 2020</code></pre>
+        </section>
+
+        <section id="getting-started">
+            <h2 id="start_title">...</h2>
+            <p id="start_desc">...</p>
+            <pre><code>#include &lt;sampvoice&gt;</code></pre>
+        </section>
+
+        <section id="concepts">
+            <h2 id="concepts_title">...</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th id="th_concept">...</th>
+                        <th id="th_desc">...</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td id="td_listener_title" style="font-weight: bold; color: var(--accent-color);">...</td>
+                        <td id="td_listener_desc">...</td>
+                    </tr>
+                    <tr>
+                        <td id="td_speaker_title" style="font-weight: bold; color: var(--accent-color);">...</td>
+                        <td id="td_speaker_desc">...</td>
+                    </tr>
+                    <tr>
+                        <td id="td_channels_title" style="font-weight: bold; color: var(--accent-color);">...</td>
+                        <td id="td_channels_desc">...</td>
+                    </tr>
+                    <tr>
+                        <td id="td_stream_title" style="font-weight: bold; color: var(--accent-color);">...</td>
+                        <td id="td_stream_desc">...</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3 id="stream_types_title" style="margin-top: 20px;">...</h3>
+            <ul>
+                <li id="stream_global">...</li>
+                <li id="stream_local">...</li>
+            </ul>
+
+            <h3 id="limits_title" style="margin-top: 20px;">...</h3>
+            <ul>
+                <li id="limit_1">...</li>
+                <li id="limit_2">...</li>
+            </ul>
+        </section>
+
+        <section id="effects">
+            <h2 id="fx_title">...</h2>
+            <p id="fx_desc">...</p>
+            <ul>
+                <li id="fx_1">...</li>
+                <li id="fx_2">...</li>
+                <li id="fx_3">...</li>
+                <li id="fx_4">...</li>
+                <li id="fx_5">...</li>
+            </ul>
+            
+            <h3 id="fx_example" style="margin-top: 20px;">...</h3>
+            <pre><code>new SV_UINT:walkieEffect = SvCreateEffect();
+SvAppendFilter(walkieEffect, SV_PARAMEQ, 0, 150.0, 36.0, -15.0);
+SvAppendFilter(walkieEffect, SV_DISTORTION, 1, -20.0, 30.0, 5400.0, 1000.0, 630.0);
+SvAppendFilter(walkieEffect, SV_PARAMEQ, 2, 150.0, 36.0, -15.0);
+SvSetEffect(gstream, walkieEffect);</code></pre>
+        </section>
+
+        <section id="types">
+            <h2 id="types_title">...</h2>
+            <p id="types_desc">...</p>
+            <ul>
+                <li id="type_str">...</li>
+                <li id="type_int">...</li>
+                <li id="type_uint">...</li>
+                <li id="type_float">...</li>
+                <li id="type_bool">...</li>
+            </ul>
+        </section>
+
+        <section id="functions">
+            <h2 id="fn_title">...</h2>
+            
+            <h3 style="color: var(--text-color); margin-top: 15px;">SvSetKey</h3>
+            <p id="fn_setkey_desc">...</p>
+            <pre><code>SvSetKey(player, 0x42, CHANNEL_LOCAL); // 0x42 is hardware scan code for key 'B'</code></pre>
+
+            <h3 style="color: var(--text-color); margin-top: 15px;">SvPlay</h3>
+            <p id="fn_play_desc">...</p>
+            <pre><code>SvPlay(player, CHANNEL_GLOBAL);</code></pre>
+
+            <h3 style="color: var(--text-color); margin-top: 15px;">SvSetTarget</h3>
+            <p id="fn_settarget_desc">...</p>
+            <pre><code>// Targets mapping options:
+SvSetTarget(stream, SvMakePlayer(player));
+SvSetTarget(stream, SvMakeVehicle(vehicle));
+SvSetTarget(stream, SvMakeObject(object));</code></pre>
+
+            <h3 style="color: var(--text-color); margin-top: 15px;">Debug API</h3>
+            <p id="fn_debug_desc">...</p>
+            <pre><code>SV_VOID:SvEnableDebug();
+SV_VOID:SvDisableDebug();</code></pre>
+        </section>
+    </main>
+
+    <script>
+        // ISI DENGAN URL RAW DARI FILE list.json DI GIST ANDA
+        const GIST_LIST_URL = "https://gist.githubusercontent.com/aliyoariel/4d83e57e9f52f092c98e8b086c0b5187/raw/list.json";
+        
+        let languageList = []; 
+        let currentLang = localStorage.getItem('sampvoice_lang') || 'en';
+
+        // Tampilkan layar error jika tidak ada internet
+        function showInternetError() {
+            document.getElementById('errorOverlay').style.display = 'flex';
+        }
+
+        // Tahap 1: Ambil daftar list bahasa (Hanya meta data: kode, nama, dan url gist)
+        async function fetchLanguageList() {
+            try {
+                const response = await fetch(GIST_LIST_URL);
+                if (!response.ok) throw new Error("Gagal mengambil daftar bahasa");
+                
+                languageList = await response.json();
+                
+                // Isi dropdown select berdasarkan list dari gist
+                const selectElement = document.getElementById('langSelect');
+                selectElement.innerHTML = '';
+                
+                languageList.forEach(lang => {
+                    const option = document.createElement('option');
+                    option.value = lang.code;
+                    option.innerText = lang.name;
+                    selectElement.appendChild(option);
+                });
+
+                // Set posisi select sesuai preferensi lokal aktif
+                selectElement.value = currentLang;
+                return true;
+            } catch (error) {
+                console.error("Error Tahap 1 (List):", error);
+                showInternetError();
+                return false;
+            }
+        }
+
+        // Tahap 2: Ambil isi konten bahasa spesifik yang sedang dipilih saat ini (Lazy Loading)
+        async function updateDOM() {
+            // Cari data objek bahasa berdasarkan kode yang aktif
+            const activeLangData = languageList.find(l => l.code === currentLang) || languageList[0];
+            if (!activeLangData) return;
+
+            document.getElementById('langSelect').value = currentLang;
+
+            try {
+                // Fetch isi JSON bahasa dari URL spesifik miliknya di Gist
+                const response = await fetch(activeLangData.url);
+                if (!response.ok) throw new Error("Gagal memuat detail bahasa");
+                
+                const dictionary = await response.json();
+                
+                // Masukkan teks ke elemen HTML
+                for (const key in dictionary) {
+                    const element = document.getElementById(key);
+                    if (element) {
+                        element.innerHTML = dictionary[key];
+                    }
+                }
+                document.documentElement.setAttribute("lang", currentLang);
+            } catch (error) {
+                console.error("Error Tahap 2 (Detail Konten):", error);
+                showInternetError();
+            }
+        }
+
+        // Fungsi pemicu saat user mengganti dropdown bahasa
+        window.changeLang = function(selectedLang) {
+            currentLang = selectedLang;
+            localStorage.setItem('sampvoice_lang', currentLang);
+            updateDOM();
+        }
+
+        // Fungsi start utama saat halaman dimuat
+        async function init() {
+            const listLoaded = await fetchLanguageList();
+            if (listLoaded) {
+                await updateDOM();
+            }
+        }
+
+        window.onload = init;
+    </script>
+</body>
+</html>

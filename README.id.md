@@ -1,5 +1,5 @@
 # **SAMPVOICE** [Original repository](https://github.com/CyberMor/sampvoice)
-English | [Русский](https://github.com/aliyoariel/openvoice-component/blob/master/README.ru.md) | [Indonesia](https://github.com/aliyoariel/openvoice-component/blob/master/README.id.md)
+[English](https://github.com/aliyoariel/openvoice-component/blob/master/README.md) | [Русский](https://github.com/aliyoariel/openvoice-component/blob/master/README.ru.md) | Indonesia
 
 ## Description
 ---------------------------------

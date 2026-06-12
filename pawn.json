@@ -1,0 +1,31 @@
+{
+	"user": "aliyoariel",
+	"repo": "open-voice-component",
+	"dependencies": [
+		"openmultiplayer/omp-stdlib"
+	],
+	"resources": [
+		{
+			"name": "open-voice-component-windows.zip",
+			"platform": "windows",
+			"archive": true,
+			"includes": ["sampvoice.inc"],
+			"plugins": ["sampvoice.dll"],
+			"files": {
+				"control.cfg": "control.cfg",
+                "sampvoice-docs.html": "sampvoice-docs.html"
+			}
+		},
+		{
+			"name": "open-voice-component-linux.zip",
+			"platform": "linux",
+			"archive": true,
+			"includes": ["sampvoice.inc"],
+			"plugins": ["sampvoice.so"],
+			"files": {
+				"control.cfg": "control.cfg",
+                "sampvoice-docs.html": "sampvoice-docs.html"
+			}
+		}
+	]
+}
